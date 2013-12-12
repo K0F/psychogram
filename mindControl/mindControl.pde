@@ -7,7 +7,7 @@ int MAX_BUFFER = 1024;
 
 float med,att,rr;
 
-ArrayList attH,medH,rawH,waves;
+ArrayList attH,medH,rawH,waves,nia;
 
 void setup(){
 
@@ -18,6 +18,7 @@ void setup(){
   rawH = new ArrayList();
 
   waves = new ArrayList();
+  nia = new ArrayList();
 
   oscP5 = new OscP5(this,5003);
 
@@ -81,7 +82,20 @@ try{
   }
   endShape();
 }catch(Exception e){println("AMR Error;");}
- 
+
+
+  /////////////// NIA ////////////////////
+stroke(#ffffff,100);
+  
+for(int ii = 0; ii < 6;ii++){
+    beginShape();
+    for(int i = 0 ; i < nia.size();i++){
+      float tmp[] = ((float[])nia.get(i));
+      vertex(i,height/2-tmp[ii]*10.0);
+
+    }
+    endShape();
+  }
 }
 
 void oscEvent(OscMessage theOscMessage) {
@@ -120,26 +134,37 @@ void oscEvent(OscMessage theOscMessage) {
     if(medH.size()>MAX_BUFFER){
       medH.remove(0);
     }
-/*
+  
     if(rawH.size()>MAX_BUFFER){
       rawH.remove(0);
     }
-    */
   }
 
   }catch(Exception e){;}
  
-  /*
   if(theOscMessage.checkAddrPattern("/nia/data")){
 
-    String a  = theOscMessage.get(0).stringValue();
+    float n[] = new float[6];
+    
+    for(int i = 0 ; i < n.length ; i++)
+        n[i] = theOscMessage.get(i).floatValue();
+    
+    nia.add(n);
+
+    if(nia.size()>MAX_BUFFER)
+      nia.remove(0);
+    
+    /*
     println("NIA said:"+a);
-     print(" typetag: "+theOscMessage.typetag());
-     println(" timetag: "+theOscMessage.timetag());
-
+     print("typetag: "+theOscMessage.typetag());
+     println("timetag: "+theOscMessage.timetag());
+    */
   }
-  */
-
+  
+  if(theOscMessage.checkAddrPattern("/nia/raw")){
+      String test = theOscMessage.get(0).stringValue();
+      println(test);
+  }
   
 }
 
