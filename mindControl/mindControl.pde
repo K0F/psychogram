@@ -5,7 +5,6 @@ OscP5 oscP5;
 
 int MAX_BUFFER = 1024;
 
-int [] raw;
 float med,att,rr;
 
 ArrayList attH,medH,rawH,waves;
@@ -20,7 +19,6 @@ void setup(){
 
   waves = new ArrayList();
 
-  raw = new int[8];
   oscP5 = new OscP5(this,5003);
 
 }
@@ -35,64 +33,70 @@ void draw(){
   /////////// RAW //////////////////////////
 
   stroke(#ff0000,100);
+      try{
   for(int ii = 0; ii < 8;ii++){
     beginShape();
     for(int i = 0 ; i < waves.size();i++){
-      int tmp = ((int[])waves.get(i))[ii];
-      vertex(i,height/2-tmp/100.0);
+      int tmp[] = ((int[])waves.get(i));
+      vertex(i,height/2-tmp[ii]/100.0);
 
     }
     endShape();
   }
 
+     }catch(Exception e){
+        println("Waves error;");}
 
   noFill();
 
+try{
+  
   /////////// AMR //////////////////////////
 
-  stroke(255,100);
+  stroke(255,70);
 
   beginShape();
   for(int i = 0 ; i < attH.size();i++){
-    float tmp = (Float)attH.get(i);
+    float tmp = (Integer)attH.get(i);
     vertex(i,height-tmp*4.0);
 
   }
   endShape();
 
-  stroke(#ffcc00,100);
+  stroke(#ffcc00,70);
 
   beginShape();
   for(int i = 0 ; i < medH.size();i++){
-    float tmp = (Float)medH.get(i);
+    float tmp = (Integer)medH.get(i);
     vertex(i,height-tmp*4.0);
 
   }
   endShape();
-
-  stroke(#00ff00,100);
-
+  stroke(#00ff00,70);
   beginShape();
   for(int i = 0 ; i < rawH.size();i++){
-    float tmp = (Float)rawH.get(i);
+    float tmp = (Integer)rawH.get(i);
     vertex(i,height/2-tmp/100.0);
 
   }
   endShape();
-
-
-
+}catch(Exception e){println("AMR Error;");}
+ 
 }
 
 void oscEvent(OscMessage theOscMessage) {
+  
+
+  try{
   String pattern = theOscMessage.addrPattern(); 
   if(theOscMessage.checkAddrPattern("/m/raw")){
 
+    int mid[] = new int[8];
     for(int i = 0 ; i < 8;i++){
-      raw[i] = theOscMessage.get(i).intValue();
+      mid[i] = theOscMessage.get(i).intValue();
     }
 
-    waves.add(raw);
+    waves.add(mid);
 
     if(waves.size()>MAX_BUFFER)
       waves.remove(0);
@@ -100,13 +104,14 @@ void oscEvent(OscMessage theOscMessage) {
 
   if(theOscMessage.checkAddrPattern("/m/amr")){
 
-    att = theOscMessage.get(0).intValue();
-    med = theOscMessage.get(1).intValue();
-    rr = theOscMessage.get(2).intValue();
+    
+    int a = theOscMessage.get(0).intValue();
+    int m = theOscMessage.get(1).intValue();
+    int r = theOscMessage.get(2).intValue();
 
-    attH.add(att);
-    medH.add(med);
-    rawH.add(rr);
+    attH.add(a);
+    medH.add(m);
+    rawH.add(r);
 
     if(attH.size()>MAX_BUFFER){
       attH.remove(0);
@@ -115,12 +120,16 @@ void oscEvent(OscMessage theOscMessage) {
     if(medH.size()>MAX_BUFFER){
       medH.remove(0);
     }
-
+/*
     if(rawH.size()>MAX_BUFFER){
       rawH.remove(0);
     }
+    */
   }
-  
+
+  }catch(Exception e){;}
+ 
+  /*
   if(theOscMessage.checkAddrPattern("/nia/data")){
 
     String a  = theOscMessage.get(0).stringValue();
@@ -129,5 +138,8 @@ void oscEvent(OscMessage theOscMessage) {
      println(" timetag: "+theOscMessage.timetag());
 
   }
+  */
+
+  
 }
 
