@@ -163,7 +163,7 @@ void oscEvent(OscMessage theOscMessage) {
   
   if(theOscMessage.checkAddrPattern("/nia/raw")){
       String test = theOscMessage.get(0).stringValue();
-      println(test);
+//      println(test);
   }
   
 }
